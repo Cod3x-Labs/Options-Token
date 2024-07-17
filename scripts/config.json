@@ -1,0 +1,32 @@
+{
+  "VERSION": "x.x.x",
+  "OWNER": "0x",
+  "ORACLE_SOURCE": "0x",
+  "ORACLE_SECS": 1800,
+  "ORACLE_MIN_PRICE": 10000000,
+  "OT_NAME": "<SYMBOL> Call Option Token",
+  "OT_SYMBOL": "o<SYMBOL>",
+  "OT_PAYMENT_TOKEN": "0x",
+  "OT_UNDERLYING_TOKEN": "0x",
+  "OT_TOKEN_ADMIN": "0x",
+  "VELO_ROUTER": "0x",
+  "ADDRESS_PROVIDER": "0x",
+  "MULTIPLIER": 5000,
+  "FEE_RECIPIENTS": [
+    "0x"
+  ],
+  "FEE_BPS": [
+    10000
+  ],
+  "STRATS": [
+    "0x"
+  ],
+  "INSTANT_EXIT_FEE": 1000,
+  "MIN_AMOUNT_TO_TRIGGER_SWAP": 1e15,
+  "CONTRACTS_TO_DEPLOY": [],
+  "SWAPPER": "0x || undefined",
+  "DISCOUNT_EXERCISE": "0x || undefined",
+  "OPTIONS_TOKEN": "0x || undefined",
+  "OPTIONS_COMPOUNDER": "0x || undefined",
+  "ORACLE": "0x || undefined"
+}

@@ -1,0 +1,5 @@
+create3-factory/=lib/create3-factory/src/
+v3-core/=lib/v3-core/contracts/
+oz-upgradeable/=lib/vault-v2/lib/openzeppelin-contracts-upgradeable/contracts/
+oz/=lib/vault-v2/lib/openzeppelin-contracts/contracts/
+vault/=lib/vault-v2/src
