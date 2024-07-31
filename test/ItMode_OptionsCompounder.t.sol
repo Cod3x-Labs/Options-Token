@@ -102,6 +102,7 @@ contract ItModeOptionsCompounder is Common {
         optionsCompounder = new OptionsCompounder();
         tmpProxy = new ERC1967Proxy(address(optionsCompounder), "");
         optionsCompounder = OptionsCompounder(address(tmpProxy));
+        optionsTokenProxy.setManagerList(address(optionsCompounder), true);
         console.log("Initializing...");
         optionsCompounder.initialize(address(optionsTokenProxy), address(addressProvider), swapProps, oracle, strategies);
 

@@ -20,6 +20,7 @@ contract OptionsToken is IOptionsToken, ERC20Upgradeable, OwnableUpgradeable, UU
 
     error OptionsToken__NotTokenAdmin();
     error OptionsToken__NotExerciseContract();
+    error OptionsToken__TransferNotAllowed();
     error Upgradeable__Unauthorized();
 
     /// -----------------------------------------------------------------------
@@ -45,6 +46,10 @@ contract OptionsToken is IOptionsToken, ERC20Upgradeable, OwnableUpgradeable, UU
     address public tokenAdmin;
 
     mapping(address => bool) public isExerciseContract;
+    // block transfers to addresses not in the allowlist
+    mapping(address => bool) public allowList;
+    // allow managers to bypass the allowlist
+    mapping(address => bool) public managerlist;
     uint256 public upgradeProposalTime;
     address public nextImplementation;
 
@@ -136,6 +141,16 @@ contract OptionsToken is IOptionsToken, ERC20Upgradeable, OwnableUpgradeable, UU
     function unpause() external onlyOwner {
         _unpause();
     }
+    
+    // @notice Gives certain addresses the ability to receive tokens
+    function setAllowList(address _address, bool _isAllowed) external onlyOwner {
+        allowList[_address] = _isAllowed;
+    }
+    
+    // @notice Allows certain addresses to transfer tokens to any address
+    function setManagerList(address _address, bool _isManager) external onlyOwner {
+        managerlist[_address] = _isManager;
+    }
 
     /// -----------------------------------------------------------------------
     /// Internal functions
@@ -165,6 +180,20 @@ contract OptionsToken is IOptionsToken, ERC20Upgradeable, OwnableUpgradeable, UU
 
         // emit event
         emit Exercise(msg.sender, recipient, amount, data0, data1, data2);
+    }
+
+    /// @notice Overriding the transfer function to block transfers to addresses not in the allowlist
+    /// @dev We don't use the _beforeTokenTransfer hook because it's called for minting and burning
+    ///   Doing so would require additional unnecessary checks
+    function _transfer(
+        address sender,
+        address recipient,
+        uint256 amount
+    ) internal virtual override {
+        // allow exercise contracts and managers to transfer freely
+        if (isExerciseContract[recipient] || managerlist[msg.sender]) return;
+        if (!allowList[recipient]) revert OptionsToken__TransferNotAllowed();
+        super._transfer(sender, recipient, amount);
     }
 
     /// -----------------------------------------------------------------------
