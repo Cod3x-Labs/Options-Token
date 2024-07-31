@@ -191,8 +191,9 @@ contract OptionsToken is IOptionsToken, ERC20Upgradeable, OwnableUpgradeable, UU
         uint256 amount
     ) internal virtual override {
         // allow exercise contracts and managers to transfer freely
-        if (isExerciseContract[recipient] || managerlist[msg.sender]) return;
-        if (!allowList[recipient]) revert OptionsToken__TransferNotAllowed();
+        if (!isExerciseContract[recipient] && !managerlist[msg.sender]) {
+            if (!allowList[recipient]) revert OptionsToken__TransferNotAllowed();
+        }
         super._transfer(sender, recipient, amount);
     }
 
