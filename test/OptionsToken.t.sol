@@ -271,6 +271,51 @@ contract OptionsTokenTest is Test {
         vm.expectRevert(DiscountExercise.Exercise__SlippageTooHigh.selector);
         optionsToken.exercise(amount, recipient, address(exerciser), abi.encode(params));
     }
+    
+
+    function test_blockRegularTransfers(uint256 amount, address sender, address recipient) public {
+        amount = bound(amount, 0, MAX_SUPPLY);
+        vm.assume(
+            sender != address(0)
+            && recipient != address(0)
+            && !optionsToken.managerList(sender)
+            && !optionsToken.isExerciseContract(recipient)
+            && !optionsToken.allowList(recipient)
+        );
+        
+        // mint options tokens
+        vm.prank(tokenAdmin);
+        optionsToken.mint(sender, amount);
+        
+        vm.startPrank(sender);
+        vm.expectRevert(OptionsToken.OptionsToken__TransferNotAllowed.selector);
+        optionsToken.transfer(recipient, amount);
+    }
+
+    function test_allowManagerTransferFrom(uint256 amount, address transferrer, address sender, address recipient) public {
+        amount = bound(amount, 0, MAX_SUPPLY);
+        vm.assume(
+            sender != address(0)
+            && transferrer != address(0)
+            && recipient != address(0)
+            && !optionsToken.isExerciseContract(recipient)
+            && !optionsToken.allowList(recipient)
+        );
+        
+        // mint options tokens
+        vm.prank(tokenAdmin);
+        optionsToken.mint(sender, amount);
+
+        vm.prank(owner);
+        optionsToken.setManagerList(transferrer, true);
+        
+        vm.prank(sender);
+        optionsToken.approve(transferrer, amount);
+        
+        vm.startPrank(transferrer);
+        optionsToken.transferFrom(sender, recipient, amount);
+    }
+    
 
     // function test_exerciseTwapOracleNotReady(uint256 amount, address recipient) public {
     //     amount = bound(amount, 1, MAX_SUPPLY);

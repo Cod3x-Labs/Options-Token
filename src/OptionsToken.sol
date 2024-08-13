@@ -49,7 +49,7 @@ contract OptionsToken is IOptionsToken, ERC20Upgradeable, OwnableUpgradeable, UU
     // block transfers to addresses not in the allowlist
     mapping(address => bool) public allowList;
     // allow managers to bypass the allowlist
-    mapping(address => bool) public managerlist;
+    mapping(address => bool) public managerList;
     uint256 public upgradeProposalTime;
     address public nextImplementation;
 
@@ -149,7 +149,7 @@ contract OptionsToken is IOptionsToken, ERC20Upgradeable, OwnableUpgradeable, UU
     
     // @notice Allows certain addresses to transfer tokens to any address
     function setManagerList(address _address, bool _isManager) external onlyOwner {
-        managerlist[_address] = _isManager;
+        managerList[_address] = _isManager;
     }
 
     /// -----------------------------------------------------------------------
@@ -191,7 +191,7 @@ contract OptionsToken is IOptionsToken, ERC20Upgradeable, OwnableUpgradeable, UU
         uint256 amount
     ) internal virtual override {
         // allow exercise contracts and managers to transfer freely
-        if (!isExerciseContract[recipient] && !managerlist[msg.sender]) {
+        if (!isExerciseContract[recipient] && !managerList[msg.sender]) {
             if (!allowList[recipient]) revert OptionsToken__TransferNotAllowed();
         }
         super._transfer(sender, recipient, amount);
