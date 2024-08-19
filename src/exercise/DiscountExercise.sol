@@ -168,7 +168,7 @@ contract DiscountExercise is BaseExercise, SwapHelper, Pausable {
     function _setMultiplier(uint256 multiplier_) internal {
         if (
             multiplier_ > BPS_DENOM * 2 // over 200%
-                || multiplier_ < BPS_DENOM / 10 // under 10%
+                || multiplier_ < BPS_DENOM / 20 // under 5%
         ) revert Exercise__MultiplierOutOfRange();
         multiplier = multiplier_;
         emit SetMultiplier(multiplier_);
