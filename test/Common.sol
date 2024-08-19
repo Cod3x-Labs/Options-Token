@@ -5,7 +5,7 @@ pragma solidity ^0.8.0;
 import "forge-std/Test.sol";
 import {ReaperVaultV2} from "vault-v2/ReaperVaultV2.sol";
 import {IERC20} from "oz/token/ERC20/IERC20.sol";
-import {ReaperSwapper, MinAmountOutData, MinAmountOutKind, IVeloRouter, ISwapRouter, UniV3SwapData} from "vault-v2/ReaperSwapper.sol";
+import {ReaperSwapper, MinAmountOutData, MinAmountOutKind, IThenaRamRouter, ISwapRouter, UniV3SwapData} from "vault-v2/ReaperSwapper.sol";
 import {OptionsToken} from "../src/OptionsToken.sol";
 import {SwapProps, ExchangeType} from "../src/helpers/SwapHelper.sol";
 import {ERC1967Proxy} from "oz/proxy/ERC1967/ERC1967Proxy.sol";
@@ -101,12 +101,29 @@ address constant MODE_VELO_ROUTER = 0x3a63171DD9BebF4D07BC782FECC7eb0b890C2A45;
 address constant MODE_VELO_FACTORY = 0x31832f2a97Fd20664D76Cc421207669b55CE4BC0;
 address constant MODE_ADDRESS_PROVIDER = 0xEDc83309549e36f3c7FD8c2C5C54B4c8e5FA00FC;
 
+/* SCROLL */
+address constant SCROLL_WETH = 0x5300000000000000000000000000000000000004;
+// address constant SCROLL_LORE = ;
+address constant SCROLL_TKN = 0x1a2fCB585b327fAdec91f55D45829472B15f17a4; // Tokan
+address constant SCROLL_ADDRESS_PROVIDER = 0x86f53066645DFfF98FD8CE64220f2A93B55518ce;
+address constant SCROLL_VELO_ROUTER = 0xA663c287b2f374878C07B7ac55C1BC927669425a; // Tokan exchange
+address constant SCROLL_VELO_FACTORY = 0x92aF10c685D2CF4CD845388C5f45aC5dc97C5024;
+address constant SCROLL_PAIR = 0x79b42dA1f8F54dA778aa614dC36E27e11f8965B1;
+
+// /* MANTLE */
+address constant MANTLE_MNT = 0x78c1b0C915c4FAA5FffA6CAbf0219DA63d7f4cb8;
+address constant MANTLE_CLEO = 0xC1E0C8C30F251A07a894609616580ad2CEb547F2;
+address constant MANTLE_ADDRESS_PROVIDER = 0x5897edae8d3d004806415A5988fc3410c528Ca5a;
+address constant MANTLE_VELO_ROUTER = 0xAAA45c8F5ef92a000a121d102F4e89278a711Faa; // Cleopatra exchange
+address constant MANTLE_VELO_FACTORY = 0xAAA16c016BF556fcD620328f0759252E29b1AB57;
+address constant MANTLE_PAIR = 0x762B916297235dc920a8c684419e41Ab0099A242; // from router's pairFor: 0x58d5D1E90302C8b25fB65117D4a2B27e9985F8a4
+
 contract Common is Test {
     IERC20 nativeToken;
     IERC20 paymentToken;
     IERC20 underlyingToken;
     IERC20 wantToken;
-    IVeloRouter veloRouter;
+    IThenaRamRouter veloRouter;
     ISwapRouter swapRouter;
     IUniswapV3Factory univ3Factory;
     ReaperSwapper reaperSwapper;
@@ -181,11 +198,11 @@ contract Common is Test {
             reaperSwapper.updateBalSwapPoolID(paths[1], paths[0], balancerVault, paymentUnderlyingBpt);
         } else if (exchangeType == ExchangeType.VeloSolid) {
             /* Configure thena ram like dexes */
-            IVeloRouter.Route[] memory veloPath = new IVeloRouter.Route[](1);
-            veloPath[0] = IVeloRouter.Route(paths[0], paths[1], false);
-            reaperSwapper.updateVeloSwapPath(paths[0], paths[1], address(veloRouter), veloPath);
-            veloPath[0] = IVeloRouter.Route(paths[1], paths[0], false);
-            reaperSwapper.updateVeloSwapPath(paths[1], paths[0], address(veloRouter), veloPath);
+            IThenaRamRouter.route[] memory veloPath = new IThenaRamRouter.route[](1);
+            veloPath[0] = IThenaRamRouter.route(paths[0], paths[1], false);
+            reaperSwapper.updateThenaRamSwapPath(paths[0], paths[1], address(veloRouter), veloPath);
+            veloPath[0] = IThenaRamRouter.route(paths[1], paths[0], false);
+            reaperSwapper.updateThenaRamSwapPath(paths[1], paths[0], address(veloRouter), veloPath);
         } else if (exchangeType == ExchangeType.UniV3) {
             /* Configure univ3 like dexes */
             uint24[] memory univ3Fees = new uint24[](1);
@@ -213,9 +230,9 @@ contract Common is Test {
                 new BalancerOracle(underlyingPaymentMock, address(underlyingToken), owner, ORACLE_SECS, ORACLE_AGO, ORACLE_MIN_PRICE);
             oracle = underlyingPaymentOracle;
         } else if (exchangeType == ExchangeType.VeloSolid) {
-            IVeloRouter router = IVeloRouter(payable(address(veloRouter)));
+            IThenaRamRouter router = IThenaRamRouter(payable(address(veloRouter)));
             ThenaOracle underlyingPaymentOracle;
-            address pair = router.poolFor(address(underlyingToken), address(paymentToken), false);
+            address pair = router.pairFor(address(underlyingToken), address(paymentToken), false);
             underlyingPaymentOracle = new ThenaOracle(IThenaPair(pair), address(underlyingToken), owner, ORACLE_SECS, ORACLE_MIN_PRICE);
             oracle = IOracle(address(underlyingPaymentOracle));
         } else if (exchangeType == ExchangeType.UniV3) {

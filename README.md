@@ -96,9 +96,9 @@ forge build
 # Testing
 
 ## Dynamic
-
+Scroll branch requires to run tests following commend:
 ```
-forge test
+forge test --evm-version shanghai
 ```
 
 `--report lcov` - coverage which can be turned on in code using "Coverage Gutters"
