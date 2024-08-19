@@ -73,7 +73,7 @@ abstract contract SwapHelper {
         } else if (exType == ExchangeType.Bal) {
             return _swapper.swapBal(tokenIn, tokenOut, amount, minAmountOutData, exchangeAddress);
         } else if (exType == ExchangeType.VeloSolid) {
-            return _swapper.swapVelo(tokenIn, tokenOut, amount, minAmountOutData, exchangeAddress);
+            return _swapper.swapThenaRam(tokenIn, tokenOut, amount, minAmountOutData, exchangeAddress);
         } else if (exType == ExchangeType.UniV3) {
             return _swapper.swapUniV3(tokenIn, tokenOut, amount, minAmountOutData, exchangeAddress);
         } else {
