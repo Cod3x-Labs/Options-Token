@@ -121,11 +121,11 @@ async function main() {
     const OptionsCompounder = await ethers.getContractFactory("OptionsCompounder");
   
     // console.log("Proxy deployment: ", [optionsToken, addressProvider, swapper, swapProps, oracle]);
-    console.log("Proxy deployment: ", [await optionsToken.getAddress(), addressProvider, await swapper.getAddress(), swapProps, await oracle.getAddress(), strats]);
+    console.log("Proxy deployment: ", [await optionsToken.getAddress(), addressProvider, swapProps, await oracle.getAddress(), strats]);
     
     optionsCompounder = await upgrades.deployProxy(
       OptionsCompounder,
-      [await optionsToken.getAddress(), addressProvider, await swapper.getAddress(), swapProps, await oracle.getAddress(), strats],
+      [await optionsToken.getAddress(), addressProvider, swapProps, await oracle.getAddress(), strats],
       { kind: "uups", initializer: "initialize" }
     );
   
