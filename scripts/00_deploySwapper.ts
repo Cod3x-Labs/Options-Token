@@ -26,9 +26,9 @@ async function main() {
         "0x60BC5E0440C867eEb4CbcE84bB1123fad2b262B1", // goober
     ];
     const multisigRoles: string[] = [
-        "0xD4D995787D39D70F35E694dC8306D7dB863234aC", // super admin
-        "0xD4D995787D39D70F35E694dC8306D7dB863234aC", // admin
-        "0xD4D995787D39D70F35E694dC8306D7dB863234aC", // guardian
+        "0x159cC26BcAB2851835e963D0C24E1956b2279Ca9", // super admin
+        "0x159cC26BcAB2851835e963D0C24E1956b2279Ca9", // admin
+        "0x159cC26BcAB2851835e963D0C24E1956b2279Ca9", // guardian
     ];
 
     // ReaperSwapper
@@ -53,8 +53,8 @@ async function main() {
         swapper = await ethers.getContractAt("ReaperSwapper", config.SWAPPER); 
     }
 
-    await swapper.updateVeloSwapPath(paymentToken, underlyingToken, veloRouter, path1);
-    await swapper.updateVeloSwapPath(underlyingToken, paymentToken, veloRouter, path2);
+    //await swapper.updateVeloSwapPath(paymentToken, underlyingToken, veloRouter, path1);
+    //await swapper.updateVeloSwapPath(underlyingToken, paymentToken, veloRouter, path2);
 }
 
 // We recommend this pattern to be able to use async/await everywhere

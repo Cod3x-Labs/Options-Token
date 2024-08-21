@@ -14,3 +14,4 @@ branch = v4.9.6
 [submodule "lib/vault-v2"]
 	path = lib/vault-v2
 	url = https://github.com/Byte-Masons/vault-v2
+	branch = scroll

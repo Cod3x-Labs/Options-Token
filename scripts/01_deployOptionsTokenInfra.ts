@@ -1,6 +1,7 @@
 import { ethers, upgrades } from "hardhat";
 import { getImplementationAddress } from '@openzeppelin/upgrades-core';
 import config from './config.json';
+const hre = require("hardhat");
 
 
 
@@ -19,12 +20,17 @@ async function main() {
   //Oracle
   let oracle;
   if(contractsToDeploy.includes("ThenaOracle")){
+    const oracleConstructorArgs = [thenaPair, targetToken, owner, secs, minPrice];
     oracle = await ethers.deployContract(
       "ThenaOracle",
-      [thenaPair, targetToken, owner, secs, minPrice]
+      oracleConstructorArgs
     );
     await oracle.waitForDeployment();
     console.log(`Oracle deployed to: ${await oracle.getAddress()}`);
+    await hre.run("verify:verify", {
+      address: await oracle.getAddress(),
+      constructorArguments: oracleConstructorArgs,
+    });
   }
   else{
     try{
@@ -78,24 +84,30 @@ async function main() {
     const instantExitFee = config.INSTANT_EXIT_FEE;
     const minAmountToTriggerSwap = config.MIN_AMOUNT_TO_TRIGGER_SWAP;
   
+    const exerciseConstructorArgs = [
+      await optionsToken.getAddress(),
+      owner,
+      paymentToken,
+      targetToken,
+      await oracle.getAddress(),
+      multiplier,
+      instantExitFee,
+      minAmountToTriggerSwap,
+      feeRecipients,
+      feeBps,
+      swapProps
+    ];
     exercise = await ethers.deployContract(
       "DiscountExercise",
-      [
-        await optionsToken.getAddress(),
-        owner,
-        paymentToken,
-        targetToken,
-        await oracle.getAddress(),
-        multiplier,
-        instantExitFee,
-        minAmountToTriggerSwap,
-        feeRecipients,
-        feeBps,
-        swapProps
-      ]
+      exerciseConstructorArgs
     );
     await exercise.waitForDeployment();
     console.log(`Exercise deployed to: ${await exercise.getAddress()}`);
+
+    await hre.run("verify:verify", {
+      address: await exercise.getAddress(),
+      constructorArguments: exerciseConstructorArgs,
+    });
   
     // Set exercise
     const exerciseAddress = await exercise.getAddress();
@@ -138,6 +150,9 @@ async function main() {
     await optionsCompounder.waitForDeployment();
     console.log(`OptionsCompounder deployed to: ${await optionsCompounder.getAddress()}`);
     console.log(`Implementation: ${await getImplementationAddress(ethers.provider, await optionsCompounder.getAddress())}`);
+    await hre.run("verify:verify", {
+      address: await optionsCompounder.getAddress(),
+    });
   }
   else{
     try{

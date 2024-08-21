@@ -56,17 +56,18 @@ const config: HardhatUserConfig = {
   etherscan: {
     apiKey: { 
       bsc: process.env.ETHERSCAN_KEY || "",
+      scroll: "IUAUSFVIJAPSA53NXFJHZY8413IN6NNFAN",
     },
-    // customChains: [
-    //   {
-    //     network: "mode",
-    //     chainId: 34443,
-    //     urls: {
-    //       apiURL: "https://explorer.mode.network",
-    //       browserURL: "https://explorer.mode.network"
-    //     }
-    //   }
-    // ]
+    customChains: [
+      {
+        network: "scroll",
+        chainId: 534352,
+        urls: {
+          apiURL: "https://api.scrollscan.com/api",
+          browserURL: "https://scrollscan.com/"
+        }
+      }
+    ]
   },
 
 };

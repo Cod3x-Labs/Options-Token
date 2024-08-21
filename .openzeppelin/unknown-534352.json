@@ -1,0 +1,381 @@
+{
+  "manifestVersion": "3.2",
+  "proxies": [
+    {
+      "address": "0x13155Ea5D9b3471ad31A47Bc82672f0538FA142E",
+      "txHash": "0x7608ede6f18a228ba86ef9470e7f5276a8d18074599ba6c265ebf655bf4f869e",
+      "kind": "uups"
+    }
+  ],
+  "impls": {
+    "8a54b641355431ac069f3b7e5b98e68ac56b68511f2abb3eb7473d75070234e7": {
+      "address": "0xF86F3Cba7034d0072725b480b09BC84f3851E119",
+      "txHash": "0x0953cb1c2495d20134d455fcd9aecf36b3ac29ba32ece33428095cb4dc637621",
+      "layout": {
+        "solcVersion": "0.8.23",
+        "storage": [
+          {
+            "label": "uniV2SwapPaths",
+            "offset": 0,
+            "slot": "0",
+            "type": "t_mapping(t_address,t_mapping(t_address,t_mapping(t_address,t_array(t_address)dyn_storage)))",
+            "contract": "UniV2Mixin",
+            "src": "vault-v2/mixins/UniV2Mixin.sol:17"
+          },
+          {
+            "label": "balSwapPoolIDs",
+            "offset": 0,
+            "slot": "1",
+            "type": "t_mapping(t_address,t_mapping(t_address,t_mapping(t_address,t_bytes32)))",
+            "contract": "BalMixin",
+            "src": "vault-v2/mixins/BalMixin.sol:19"
+          },
+          {
+            "label": "_uniV3SwapPaths",
+            "offset": 0,
+            "slot": "2",
+            "type": "t_mapping(t_address,t_mapping(t_address,t_mapping(t_address,t_struct(UniV3SwapData)54718_storage)))",
+            "contract": "UniV3Mixin",
+            "src": "vault-v2/mixins/UniV3Mixin.sol:18"
+          },
+          {
+            "label": "thenaRamSwapPaths",
+            "offset": 0,
+            "slot": "3",
+            "type": "t_mapping(t_address,t_mapping(t_address,t_mapping(t_address,t_array(t_struct(route)55173_storage)dyn_storage)))",
+            "contract": "ThenaRamMixin",
+            "src": "vault-v2/mixins/ThenaRamMixin.sol:21"
+          },
+          {
+            "label": "_initialized",
+            "offset": 0,
+            "slot": "4",
+            "type": "t_uint8",
+            "contract": "Initializable",
+            "src": "oz-upgradeable/proxy/utils/Initializable.sol:63",
+            "retypedFrom": "bool"
+          },
+          {
+            "label": "_initializing",
+            "offset": 1,
+            "slot": "4",
+            "type": "t_bool",
+            "contract": "Initializable",
+            "src": "oz-upgradeable/proxy/utils/Initializable.sol:68"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "5",
+            "type": "t_array(t_uint256)50_storage",
+            "contract": "ERC1967UpgradeUpgradeable",
+            "src": "oz-upgradeable/proxy/ERC1967/ERC1967UpgradeUpgradeable.sol:169"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "55",
+            "type": "t_array(t_uint256)50_storage",
+            "contract": "UUPSUpgradeable",
+            "src": "oz-upgradeable/proxy/utils/UUPSUpgradeable.sol:111"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "105",
+            "type": "t_array(t_uint256)50_storage",
+            "contract": "ContextUpgradeable",
+            "src": "oz-upgradeable/utils/ContextUpgradeable.sol:40"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "155",
+            "type": "t_array(t_uint256)50_storage",
+            "contract": "ERC165Upgradeable",
+            "src": "oz-upgradeable/utils/introspection/ERC165Upgradeable.sol:41"
+          },
+          {
+            "label": "_roles",
+            "offset": 0,
+            "slot": "205",
+            "type": "t_mapping(t_bytes32,t_struct(RoleData)25279_storage)",
+            "contract": "AccessControlUpgradeable",
+            "src": "oz-upgradeable/access/AccessControlUpgradeable.sol:57"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "206",
+            "type": "t_array(t_uint256)49_storage",
+            "contract": "AccessControlUpgradeable",
+            "src": "oz-upgradeable/access/AccessControlUpgradeable.sol:260"
+          },
+          {
+            "label": "_roleMembers",
+            "offset": 0,
+            "slot": "255",
+            "type": "t_mapping(t_bytes32,t_struct(AddressSet)29825_storage)",
+            "contract": "AccessControlEnumerableUpgradeable",
+            "src": "oz-upgradeable/access/AccessControlEnumerableUpgradeable.sol:17"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "256",
+            "type": "t_array(t_uint256)49_storage",
+            "contract": "AccessControlEnumerableUpgradeable",
+            "src": "oz-upgradeable/access/AccessControlEnumerableUpgradeable.sol:76"
+          },
+          {
+            "label": "upgradeProposalTime",
+            "offset": 0,
+            "slot": "305",
+            "type": "t_uint256",
+            "contract": "ReaperSwapper",
+            "src": "vault-v2/ReaperSwapper.sol:74"
+          },
+          {
+            "label": "aggregatorData",
+            "offset": 0,
+            "slot": "306",
+            "type": "t_mapping(t_address,t_struct(CLAggregatorData)50410_storage)",
+            "contract": "ReaperSwapper",
+            "src": "vault-v2/ReaperSwapper.sol:77"
+          }
+        ],
+        "types": {
+          "t_address": {
+            "label": "address",
+            "numberOfBytes": "20"
+          },
+          "t_array(t_address)dyn_storage": {
+            "label": "address[]",
+            "numberOfBytes": "32"
+          },
+          "t_array(t_bytes32)dyn_storage": {
+            "label": "bytes32[]",
+            "numberOfBytes": "32"
+          },
+          "t_array(t_struct(route)55173_storage)dyn_storage": {
+            "label": "struct IThenaRamRouter.route[]",
+            "numberOfBytes": "32"
+          },
+          "t_array(t_uint24)dyn_storage": {
+            "label": "uint24[]",
+            "numberOfBytes": "32"
+          },
+          "t_array(t_uint256)49_storage": {
+            "label": "uint256[49]",
+            "numberOfBytes": "1568"
+          },
+          "t_array(t_uint256)50_storage": {
+            "label": "uint256[50]",
+            "numberOfBytes": "1600"
+          },
+          "t_bool": {
+            "label": "bool",
+            "numberOfBytes": "1"
+          },
+          "t_bytes32": {
+            "label": "bytes32",
+            "numberOfBytes": "32"
+          },
+          "t_contract(AggregatorV3Interface)53765": {
+            "label": "contract AggregatorV3Interface",
+            "numberOfBytes": "20"
+          },
+          "t_mapping(t_address,t_array(t_address)dyn_storage)": {
+            "label": "mapping(address => address[])",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_address,t_array(t_struct(route)55173_storage)dyn_storage)": {
+            "label": "mapping(address => struct IThenaRamRouter.route[])",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_address,t_bool)": {
+            "label": "mapping(address => bool)",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_address,t_bytes32)": {
+            "label": "mapping(address => bytes32)",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_address,t_mapping(t_address,t_array(t_address)dyn_storage))": {
+            "label": "mapping(address => mapping(address => address[]))",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_address,t_mapping(t_address,t_array(t_struct(route)55173_storage)dyn_storage))": {
+            "label": "mapping(address => mapping(address => struct IThenaRamRouter.route[]))",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_address,t_mapping(t_address,t_bytes32))": {
+            "label": "mapping(address => mapping(address => bytes32))",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_address,t_mapping(t_address,t_mapping(t_address,t_array(t_address)dyn_storage)))": {
+            "label": "mapping(address => mapping(address => mapping(address => address[])))",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_address,t_mapping(t_address,t_mapping(t_address,t_array(t_struct(route)55173_storage)dyn_storage)))": {
+            "label": "mapping(address => mapping(address => mapping(address => struct IThenaRamRouter.route[])))",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_address,t_mapping(t_address,t_mapping(t_address,t_bytes32)))": {
+            "label": "mapping(address => mapping(address => mapping(address => bytes32)))",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_address,t_mapping(t_address,t_mapping(t_address,t_struct(UniV3SwapData)54718_storage)))": {
+            "label": "mapping(address => mapping(address => mapping(address => struct UniV3SwapData)))",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_address,t_mapping(t_address,t_struct(UniV3SwapData)54718_storage))": {
+            "label": "mapping(address => mapping(address => struct UniV3SwapData))",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_address,t_struct(CLAggregatorData)50410_storage)": {
+            "label": "mapping(address => struct ReaperSwapper.CLAggregatorData)",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_address,t_struct(UniV3SwapData)54718_storage)": {
+            "label": "mapping(address => struct UniV3SwapData)",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_bytes32,t_struct(AddressSet)29825_storage)": {
+            "label": "mapping(bytes32 => struct EnumerableSetUpgradeable.AddressSet)",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_bytes32,t_struct(RoleData)25279_storage)": {
+            "label": "mapping(bytes32 => struct AccessControlUpgradeable.RoleData)",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_bytes32,t_uint256)": {
+            "label": "mapping(bytes32 => uint256)",
+            "numberOfBytes": "32"
+          },
+          "t_struct(AddressSet)29825_storage": {
+            "label": "struct EnumerableSetUpgradeable.AddressSet",
+            "members": [
+              {
+                "label": "_inner",
+                "type": "t_struct(Set)29510_storage",
+                "offset": 0,
+                "slot": "0"
+              }
+            ],
+            "numberOfBytes": "64"
+          },
+          "t_struct(CLAggregatorData)50410_storage": {
+            "label": "struct ReaperSwapper.CLAggregatorData",
+            "members": [
+              {
+                "label": "aggregator",
+                "type": "t_contract(AggregatorV3Interface)53765",
+                "offset": 0,
+                "slot": "0"
+              },
+              {
+                "label": "timeout",
+                "type": "t_uint256",
+                "offset": 0,
+                "slot": "1"
+              }
+            ],
+            "numberOfBytes": "64"
+          },
+          "t_struct(RoleData)25279_storage": {
+            "label": "struct AccessControlUpgradeable.RoleData",
+            "members": [
+              {
+                "label": "members",
+                "type": "t_mapping(t_address,t_bool)",
+                "offset": 0,
+                "slot": "0"
+              },
+              {
+                "label": "adminRole",
+                "type": "t_bytes32",
+                "offset": 0,
+                "slot": "1"
+              }
+            ],
+            "numberOfBytes": "64"
+          },
+          "t_struct(Set)29510_storage": {
+            "label": "struct EnumerableSetUpgradeable.Set",
+            "members": [
+              {
+                "label": "_values",
+                "type": "t_array(t_bytes32)dyn_storage",
+                "offset": 0,
+                "slot": "0"
+              },
+              {
+                "label": "_indexes",
+                "type": "t_mapping(t_bytes32,t_uint256)",
+                "offset": 0,
+                "slot": "1"
+              }
+            ],
+            "numberOfBytes": "64"
+          },
+          "t_struct(UniV3SwapData)54718_storage": {
+            "label": "struct UniV3SwapData",
+            "members": [
+              {
+                "label": "path",
+                "type": "t_array(t_address)dyn_storage",
+                "offset": 0,
+                "slot": "0"
+              },
+              {
+                "label": "fees",
+                "type": "t_array(t_uint24)dyn_storage",
+                "offset": 0,
+                "slot": "1"
+              }
+            ],
+            "numberOfBytes": "64"
+          },
+          "t_struct(route)55173_storage": {
+            "label": "struct IThenaRamRouter.route",
+            "members": [
+              {
+                "label": "from",
+                "type": "t_address",
+                "offset": 0,
+                "slot": "0"
+              },
+              {
+                "label": "to",
+                "type": "t_address",
+                "offset": 0,
+                "slot": "1"
+              },
+              {
+                "label": "stable",
+                "type": "t_bool",
+                "offset": 20,
+                "slot": "1"
+              }
+            ],
+            "numberOfBytes": "64"
+          },
+          "t_uint24": {
+            "label": "uint24",
+            "numberOfBytes": "3"
+          },
+          "t_uint256": {
+            "label": "uint256",
+            "numberOfBytes": "32"
+          },
+          "t_uint8": {
+            "label": "uint8",
+            "numberOfBytes": "1"
+          }
+        },
+        "namespaces": {}
+      }
+    }
+  }
+}
