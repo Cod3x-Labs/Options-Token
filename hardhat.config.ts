@@ -47,6 +47,11 @@ const config: HardhatUserConfig = {
       chainId: 34443,
       accounts: [`0x${PRIVATE_KEY}`],
     },
+    scroll: {
+      url: "https://rpc.scroll.io",
+      chainId: 534352,
+      accounts: [`0x${PRIVATE_KEY}`],
+    },
   },
   etherscan: {
     apiKey: { 

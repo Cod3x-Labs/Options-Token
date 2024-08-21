@@ -19,7 +19,7 @@ contract ItScrollOptionsCompounder is Common {
     using FixedPointMathLib for uint256;
 
     /* Variable assignment (depends on chain) */
-    uint256 constant FORK_BLOCK = 8482034;
+    uint256 constant FORK_BLOCK = 8574269;
     string MAINNET_URL = vm.envString("SCROLL_RPC_URL");
 
     /* Contract variables */
@@ -34,10 +34,10 @@ contract ItScrollOptionsCompounder is Common {
         ExchangeType exchangeType = ExchangeType.VeloSolid;
         nativeToken = IERC20(SCROLL_WETH);
         paymentToken = IERC20(SCROLL_WETH);
-        underlyingToken = IERC20(SCROLL_TKN);
+        underlyingToken = IERC20(SCROLL_NURI);
         addressProvider = SCROLL_ADDRESS_PROVIDER;
-        veloRouter = IThenaRamRouter(SCROLL_VELO_ROUTER);
-        veloFactory = SCROLL_VELO_FACTORY;
+        veloRouter = IThenaRamRouter(SCROLL_NURI_ROUTER);
+        veloFactory = SCROLL_NURI_PAIR_FACTORY;
 
         /* Setup network */
         uint256 fork = vm.createFork(MAINNET_URL, FORK_BLOCK);
