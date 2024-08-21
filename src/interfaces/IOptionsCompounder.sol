@@ -19,4 +19,5 @@ error OptionsCompounder__AmountOutIsZero();
 
 interface IOptionsCompounder {
     function harvestOTokens(uint256 amount, address exerciseContract, uint256 minWantAmount) external;
+    function optionsToken() external view returns (address);
 }
