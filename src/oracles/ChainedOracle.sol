@@ -5,7 +5,6 @@ import {Owned} from "solmate/auth/Owned.sol";
 import {FixedPointMathLib} from "solmate/utils/FixedPointMathLib.sol";
 import {ERC20} from "solmate/tokens/ERC20.sol";
 import {IOracle} from "../interfaces/IOracle.sol";
-import "forge-std/console.sol";
 
 /// @title Combined oracle for sourcing a price using multiple pools
 /// @author zefram.eth/lookee/Eidolon
@@ -55,10 +54,8 @@ contract ChainedOracle is IOracle, Owned {
 
         // first token must be the underlying token
         if (lastUnderlyingToken != underlyingToken_) revert ChainedOracle__IncompatibleOracles();
-        console.log(1);
         // each oracle must match the previous one
         if (currentUnderlyingToken != lastPaymentToken) revert ChainedOracle__IncompatibleOracles();
-        console.log(2);
 
         // loop reserved for 3+ oracles
         for (uint256 i = 2; i < oracles_.length; i++) { // starts at second oracle
@@ -67,12 +64,10 @@ contract ChainedOracle is IOracle, Owned {
             (currentPaymentToken, currentUnderlyingToken) = oracles_[i].getTokens();
             // each oracle must match previous one
             if (currentPaymentToken != lastUnderlyingToken) revert ChainedOracle__IncompatibleOracles();
-        console.log(3);
         }
         
         // check if last token is the underlying
         if (currentPaymentToken != paymentToken_) revert ChainedOracle__IncompatibleOracles();
-        console.log(4);
         
         oracles = oracles_;
         minPrice = minPrice_;
