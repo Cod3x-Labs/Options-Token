@@ -13,7 +13,8 @@ import {FixedPointMathLib} from "solmate/utils/FixedPointMathLib.sol";
 // import {ReaperStrategyGranary, Externals} from "./strategies/ReaperStrategyGranary.sol";
 import {OptionsCompounder} from "../src/OptionsCompounder.sol";
 // import {MockedLendingPool} from "../test/mocks/MockedStrategy.sol";
-import {ReaperSwapper, MinAmountOutData, MinAmountOutKind, IThenaRamRouter, ISwapRouter, UniV3SwapData} from "vault-v2/ReaperSwapper.sol";
+import {ReaperSwapper, MinAmountOutData, MinAmountOutKind, IThenaRamRouter, UniV3SwapData} from "vault-v2/ReaperSwapper.sol";
+import {ISwapRouter} from "vault-v2/interfaces/ISwapRouter.sol";
 
 contract ItScrollOptionsCompounder is Common {
     using FixedPointMathLib for uint256;
