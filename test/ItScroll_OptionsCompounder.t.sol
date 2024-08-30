@@ -13,7 +13,7 @@ import {FixedPointMathLib} from "solmate/utils/FixedPointMathLib.sol";
 // import {ReaperStrategyGranary, Externals} from "./strategies/ReaperStrategyGranary.sol";
 import {OptionsCompounder} from "../src/OptionsCompounder.sol";
 // import {MockedLendingPool} from "../test/mocks/MockedStrategy.sol";
-import {ReaperSwapper, MinAmountOutData, MinAmountOutKind, IThenaRamRouter, UniV3SwapData} from "vault-v2/ReaperSwapper.sol";
+import {ReaperSwapper, MinAmountOutData, MinAmountOutKind, IVeloRouter, UniV3SwapData} from "vault-v2/ReaperSwapper.sol";
 import {ISwapRouter} from "vault-v2/interfaces/ISwapRouter.sol";
 
 contract ItScrollOptionsCompounder is Common {
@@ -37,7 +37,7 @@ contract ItScrollOptionsCompounder is Common {
         paymentToken = IERC20(SCROLL_WETH);
         underlyingToken = IERC20(SCROLL_NURI);
         addressProvider = SCROLL_ADDRESS_PROVIDER;
-        veloRouter = IThenaRamRouter(SCROLL_NURI_ROUTER);
+        veloRouter = IVeloRouter(SCROLL_NURI_ROUTER);
         veloFactory = SCROLL_NURI_PAIR_FACTORY;
 
         /* Setup network */

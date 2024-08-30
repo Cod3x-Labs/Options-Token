@@ -5,7 +5,7 @@ pragma solidity ^0.8.0;
 import "forge-std/Test.sol";
 import {ReaperVaultV2} from "vault-v2/ReaperVaultV2.sol";
 import {IERC20} from "oz/token/ERC20/IERC20.sol";
-import {ReaperSwapper, MinAmountOutData, MinAmountOutKind, IThenaRamRouter, UniV3SwapData} from "vault-v2/ReaperSwapper.sol";
+import {ReaperSwapper, MinAmountOutData, MinAmountOutKind, IVeloRouter, UniV3SwapData} from "vault-v2/ReaperSwapper.sol";
 import {ISwapRouter} from "vault-v2/interfaces/ISwapRouter.sol";
 import {OptionsToken} from "../src/OptionsToken.sol";
 import {SwapProps, ExchangeType} from "../src/helpers/SwapHelper.sol";
@@ -129,7 +129,7 @@ contract Common is Test {
     IERC20 paymentToken;
     IERC20 underlyingToken;
     IERC20 wantToken;
-    IThenaRamRouter veloRouter;
+    IVeloRouter veloRouter;
     ISwapRouter swapRouter;
     IUniswapV3Factory univ3Factory;
     ReaperSwapper reaperSwapper;
@@ -204,11 +204,11 @@ contract Common is Test {
             reaperSwapper.updateBalSwapPoolID(paths[1], paths[0], balancerVault, paymentUnderlyingBpt);
         } else if (exchangeType == ExchangeType.VeloSolid) {
             /* Configure thena ram like dexes */
-            IThenaRamRouter.route[] memory veloPath = new IThenaRamRouter.route[](1);
-            veloPath[0] = IThenaRamRouter.route(paths[0], paths[1], false);
-            reaperSwapper.updateThenaRamSwapPath(paths[0], paths[1], address(veloRouter), veloPath);
-            veloPath[0] = IThenaRamRouter.route(paths[1], paths[0], false);
-            reaperSwapper.updateThenaRamSwapPath(paths[1], paths[0], address(veloRouter), veloPath);
+            IVeloRouter.Route[] memory veloPath = new IVeloRouter.Route[](1);
+            veloPath[0] = IVeloRouter.Route(paths[0], paths[1], false);
+            reaperSwapper.updateVeloSwapPath(paths[0], paths[1], address(veloRouter), veloPath);
+            veloPath[0] = IVeloRouter.Route(paths[1], paths[0], false);
+            reaperSwapper.updateVeloSwapPath(paths[1], paths[0], address(veloRouter), veloPath);
         } else if (exchangeType == ExchangeType.UniV3) {
             /* Configure univ3 like dexes */
             uint24[] memory univ3Fees = new uint24[](1);
@@ -236,7 +236,7 @@ contract Common is Test {
                 new BalancerOracle(underlyingPaymentMock, address(underlyingToken), owner, ORACLE_SECS, ORACLE_AGO, ORACLE_MIN_PRICE);
             oracle = underlyingPaymentOracle;
         } else if (exchangeType == ExchangeType.VeloSolid) {
-            IThenaRamRouter router = IThenaRamRouter(payable(address(veloRouter)));
+            IVeloRouter router = IVeloRouter(payable(address(veloRouter)));
             ThenaOracle underlyingPaymentOracle;
             address pair = router.pairFor(address(underlyingToken), address(paymentToken), false);
             underlyingPaymentOracle = new ThenaOracle(IThenaPair(pair), address(underlyingToken), owner, ORACLE_SECS, ORACLE_MIN_PRICE);
