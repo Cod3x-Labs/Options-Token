@@ -52,11 +52,17 @@ const config: HardhatUserConfig = {
       chainId: 534352,
       accounts: [`0x${PRIVATE_KEY}`],
     },
+    mantle: {
+      url: "https://mantle.drpc.org",
+      chainId: 5000,
+      accounts: [`0x${PRIVATE_KEY}`],
+    },
   },
   etherscan: {
     apiKey: { 
       bsc: process.env.ETHERSCAN_KEY || "",
       scroll: "IUAUSFVIJAPSA53NXFJHZY8413IN6NNFAN",
+      mantle: "abc123",
     },
     customChains: [
       {
@@ -65,6 +71,14 @@ const config: HardhatUserConfig = {
         urls: {
           apiURL: "https://api.scrollscan.com/api",
           browserURL: "https://scrollscan.com/"
+        }
+      },
+      {
+        network: "mantle",
+        chainId: 5000 ,
+        urls: {
+          apiURL: "https://explorer.mantle.xyz/api",
+          browserURL: "https://explorer.mantle.xyz/"
         }
       }
     ]
