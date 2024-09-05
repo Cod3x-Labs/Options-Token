@@ -33,7 +33,8 @@ contract FixedExerciseDecaying is BaseExercise {
     event SetPrice(uint256 indexed price);
 
     /// Constants
-    uint256 public constant DENOM = 10_000;
+    uint256 public constant DENOM = 1e18;
+
 
     /// Immutable parameters
 
@@ -54,6 +55,8 @@ contract FixedExerciseDecaying is BaseExercise {
     /// @notice The fixed token price, set by the owner
     uint256 public price;
 
+    uint256 public maxDecay;
+
     constructor(
         OptionsToken oToken_,
         address owner_,
@@ -62,11 +65,13 @@ contract FixedExerciseDecaying is BaseExercise {
         uint256 price_,
         uint256 startTime_,
         uint256 endTime_,
+        uint256 maxDecay_,
         address[] memory feeRecipients_,
         uint256[] memory feeBPS_
     ) BaseExercise(oToken_, feeRecipients_, feeBPS_) Owned(owner_) {
         paymentToken = paymentToken_;
         underlyingToken = underlyingToken_;
+        maxDecay = maxDecay_;
 
         _setTimes(startTime_, endTime_);
         _setPrice(price_);
@@ -131,7 +136,7 @@ contract FixedExerciseDecaying is BaseExercise {
 
         // decode params if needed
 
-        paymentAmount = amount.mulWadUp(price.mulDivUp(uint256(949494949494949494949499449494949), DENOM);); // check decimals
+        paymentAmount = getPaymentAmount(amount);
 
         // transfer payment tokens from user to the set receivers
         distributeFeesFrom(paymentAmount, paymentToken, from);
@@ -147,9 +152,14 @@ contract FixedExerciseDecaying is BaseExercise {
 
     /// View functions
 
+
+    //IS IT OK TO MAKE THIS PUBLIC?? I THINK SO
     /// @notice Returns the amount of payment tokens required to exercise the given amount of options tokens.
     /// @param amount The amount of options tokens to exercise
-    function getPaymentAmount(uint256 amount) external view returns (uint256 paymentAmount) {
-        paymentAmount = amount.mulWadUp(price); // check decimals
+    function getPaymentAmount(uint256 amount) public view returns (uint256 paymentAmount) {
+        //can this be simplified using mulWad?
+        uint256 decayFactor = (block.timestamp - startTime) * DENOM / (endTime - startTime); //out of DENOM, will be near 1e18 (1) at the end of the time window, will be near 0 at start
+        uint256 decayedPrice = (decayFactor > maxDecay) ? (price - price.mulWadUp(maxDecay)) : (price - price.mulWadUp(decayFactor));
+        paymentAmount = amount.mulWadUp(decayedPrice); // check decimals
     }
 }
