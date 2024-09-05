@@ -5,6 +5,11 @@
       "address": "0x13155Ea5D9b3471ad31A47Bc82672f0538FA142E",
       "txHash": "0x7608ede6f18a228ba86ef9470e7f5276a8d18074599ba6c265ebf655bf4f869e",
       "kind": "uups"
+    },
+    {
+      "address": "0xff7023B107625014e9f527138496824cFca6aEEB",
+      "txHash": "0x212bd87708eec221467b83a4fd6bd2655b92e7ba6249d0a3c0de02b06117edea",
+      "kind": "uups"
     }
   ],
   "impls": {
@@ -364,6 +369,231 @@
           "t_uint24": {
             "label": "uint24",
             "numberOfBytes": "3"
+          },
+          "t_uint256": {
+            "label": "uint256",
+            "numberOfBytes": "32"
+          },
+          "t_uint8": {
+            "label": "uint8",
+            "numberOfBytes": "1"
+          }
+        },
+        "namespaces": {}
+      }
+    },
+    "5d3b934e7eb50e161cb1bc891d3a13c24875f4e04de3a4d81bfe346af81ac434": {
+      "address": "0x0cb363aA38320Eadc967CA427A4A89B7E19291f0",
+      "txHash": "0xb0133046ad06657bdfd4cc358c7669b3cc991658ea1b8a64d8cb8fb39ba8e063",
+      "layout": {
+        "solcVersion": "0.8.23",
+        "storage": [
+          {
+            "label": "_initialized",
+            "offset": 0,
+            "slot": "0",
+            "type": "t_uint8",
+            "contract": "Initializable",
+            "src": "oz-upgradeable/proxy/utils/Initializable.sol:63",
+            "retypedFrom": "bool"
+          },
+          {
+            "label": "_initializing",
+            "offset": 1,
+            "slot": "0",
+            "type": "t_bool",
+            "contract": "Initializable",
+            "src": "oz-upgradeable/proxy/utils/Initializable.sol:68"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "1",
+            "type": "t_array(t_uint256)50_storage",
+            "contract": "ContextUpgradeable",
+            "src": "oz-upgradeable/utils/ContextUpgradeable.sol:40"
+          },
+          {
+            "label": "_owner",
+            "offset": 0,
+            "slot": "51",
+            "type": "t_address",
+            "contract": "OwnableUpgradeable",
+            "src": "oz-upgradeable/access/OwnableUpgradeable.sol:22"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "52",
+            "type": "t_array(t_uint256)49_storage",
+            "contract": "OwnableUpgradeable",
+            "src": "oz-upgradeable/access/OwnableUpgradeable.sol:94"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "101",
+            "type": "t_array(t_uint256)50_storage",
+            "contract": "ERC1967UpgradeUpgradeable",
+            "src": "oz-upgradeable/proxy/ERC1967/ERC1967UpgradeUpgradeable.sol:169"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "151",
+            "type": "t_array(t_uint256)50_storage",
+            "contract": "UUPSUpgradeable",
+            "src": "oz-upgradeable/proxy/utils/UUPSUpgradeable.sol:111"
+          },
+          {
+            "label": "swapProps",
+            "offset": 0,
+            "slot": "201",
+            "type": "t_struct(SwapProps)51785_storage",
+            "contract": "SwapHelper",
+            "src": "src/helpers/SwapHelper.sol:29"
+          },
+          {
+            "label": "addressProvider",
+            "offset": 0,
+            "slot": "204",
+            "type": "t_contract(ILendingPoolAddressesProvider)52800",
+            "contract": "OptionsCompounder",
+            "src": "src/OptionsCompounder.sol:53"
+          },
+          {
+            "label": "lendingPool",
+            "offset": 0,
+            "slot": "205",
+            "type": "t_contract(ILendingPool)52649",
+            "contract": "OptionsCompounder",
+            "src": "src/OptionsCompounder.sol:54"
+          },
+          {
+            "label": "flashloanFinished",
+            "offset": 20,
+            "slot": "205",
+            "type": "t_bool",
+            "contract": "OptionsCompounder",
+            "src": "src/OptionsCompounder.sol:55"
+          },
+          {
+            "label": "oracle",
+            "offset": 0,
+            "slot": "206",
+            "type": "t_contract(IOracle)52903",
+            "contract": "OptionsCompounder",
+            "src": "src/OptionsCompounder.sol:56"
+          },
+          {
+            "label": "optionsToken",
+            "offset": 0,
+            "slot": "207",
+            "type": "t_contract(IOptionsToken)52885",
+            "contract": "OptionsCompounder",
+            "src": "src/OptionsCompounder.sol:57"
+          },
+          {
+            "label": "upgradeProposalTime",
+            "offset": 0,
+            "slot": "208",
+            "type": "t_uint256",
+            "contract": "OptionsCompounder",
+            "src": "src/OptionsCompounder.sol:59"
+          },
+          {
+            "label": "nextImplementation",
+            "offset": 0,
+            "slot": "209",
+            "type": "t_address",
+            "contract": "OptionsCompounder",
+            "src": "src/OptionsCompounder.sol:60"
+          },
+          {
+            "label": "strats",
+            "offset": 0,
+            "slot": "210",
+            "type": "t_array(t_address)dyn_storage",
+            "contract": "OptionsCompounder",
+            "src": "src/OptionsCompounder.sol:61"
+          }
+        ],
+        "types": {
+          "t_address": {
+            "label": "address",
+            "numberOfBytes": "20"
+          },
+          "t_array(t_address)dyn_storage": {
+            "label": "address[]",
+            "numberOfBytes": "32"
+          },
+          "t_array(t_uint256)49_storage": {
+            "label": "uint256[49]",
+            "numberOfBytes": "1568"
+          },
+          "t_array(t_uint256)50_storage": {
+            "label": "uint256[50]",
+            "numberOfBytes": "1600"
+          },
+          "t_bool": {
+            "label": "bool",
+            "numberOfBytes": "1"
+          },
+          "t_contract(ILendingPool)52649": {
+            "label": "contract ILendingPool",
+            "numberOfBytes": "20"
+          },
+          "t_contract(ILendingPoolAddressesProvider)52800": {
+            "label": "contract ILendingPoolAddressesProvider",
+            "numberOfBytes": "20"
+          },
+          "t_contract(IOptionsToken)52885": {
+            "label": "contract IOptionsToken",
+            "numberOfBytes": "20"
+          },
+          "t_contract(IOracle)52903": {
+            "label": "contract IOracle",
+            "numberOfBytes": "20"
+          },
+          "t_enum(ExchangeType)51775": {
+            "label": "enum ExchangeType",
+            "members": [
+              "UniV2",
+              "Bal",
+              "VeloSolid",
+              "UniV3"
+            ],
+            "numberOfBytes": "1"
+          },
+          "t_struct(SwapProps)51785_storage": {
+            "label": "struct SwapProps",
+            "members": [
+              {
+                "label": "swapper",
+                "type": "t_address",
+                "offset": 0,
+                "slot": "0"
+              },
+              {
+                "label": "exchangeAddress",
+                "type": "t_address",
+                "offset": 0,
+                "slot": "1"
+              },
+              {
+                "label": "exchangeTypes",
+                "type": "t_enum(ExchangeType)51775",
+                "offset": 20,
+                "slot": "1"
+              },
+              {
+                "label": "maxSwapSlippage",
+                "type": "t_uint256",
+                "offset": 0,
+                "slot": "2"
+              }
+            ],
+            "numberOfBytes": "96"
           },
           "t_uint256": {
             "label": "uint256",
