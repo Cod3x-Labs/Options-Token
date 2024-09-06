@@ -33,7 +33,6 @@ contract FixedExerciseDecaying is BaseExercise {
     event SetPrice(uint256 indexed price);
 
     /// Constants
-    uint256 public constant DENOM = 1e18;
 
 
     /// Immutable parameters
@@ -157,8 +156,7 @@ contract FixedExerciseDecaying is BaseExercise {
     /// @notice Returns the amount of payment tokens required to exercise the given amount of options tokens.
     /// @param amount The amount of options tokens to exercise
     function getPaymentAmount(uint256 amount) public view returns (uint256 paymentAmount) {
-        //can this be simplified using mulWad?
-        uint256 decayFactor = (block.timestamp - startTime) * DENOM / (endTime - startTime); //out of DENOM, will be near 1e18 (1) at the end of the time window, will be near 0 at start
+        uint256 decayFactor = (block.timestamp - startTime) * WAD / (endTime - startTime); //out of WAD, will be near 1e18 (1) at the end of the time window, will be near 0 at start
         uint256 decayedPrice = (decayFactor > maxDecay) ? (price - price.mulWadUp(maxDecay)) : (price - price.mulWadUp(decayFactor));
         paymentAmount = amount.mulWadUp(decayedPrice); // check decimals
     }

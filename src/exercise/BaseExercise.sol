@@ -21,6 +21,8 @@ abstract contract BaseExercise is IExercise, Owned {
 
     uint256 public constant FEE_DENOMINATOR = 10_000;
 
+    uint256 public constant WAD = 1e18;
+
     IOptionsToken public immutable oToken;
 
     /// @notice The fee addresses which receive any tokens paid during redemption
