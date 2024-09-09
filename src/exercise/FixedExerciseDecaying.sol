@@ -34,7 +34,6 @@ contract FixedExerciseDecaying is BaseExercise {
 
     /// Constants
 
-
     /// Immutable parameters
 
     /// @notice The token paid by the options token holder during redemption
@@ -95,7 +94,6 @@ contract FixedExerciseDecaying is BaseExercise {
 
     /// Owner functions
 
-
     /// @notice Sets the fixed token price
     function setPrice(uint256 price_) external onlyOwner {
         _setPrice(price_);
@@ -151,13 +149,12 @@ contract FixedExerciseDecaying is BaseExercise {
 
     /// View functions
 
-
     //IS IT OK TO MAKE THIS PUBLIC?? I THINK SO
     /// @notice Returns the amount of payment tokens required to exercise the given amount of options tokens.
     /// @param amount The amount of options tokens to exercise
     function getPaymentAmount(uint256 amount) public view returns (uint256 paymentAmount) {
         uint256 decayFactor = (block.timestamp - startTime) * WAD / (endTime - startTime); //out of WAD, will be near 1e18 (1) at the end of the time window, will be near 0 at start
-        uint256 decayedPrice = (decayFactor > maxDecay) ? (price - price.mulWadUp(maxDecay)) : (price - price.mulWadUp(decayFactor));
+        uint256 decayedPrice = (decayFactor > maxDecay) ? (price - price.mulWadUp(maxDecay)) : (price - price.mulWadUp(decayFactor)); // fix the if logic here
         paymentAmount = amount.mulWadUp(decayedPrice); // check decimals
     }
 }

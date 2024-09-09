@@ -19,11 +19,11 @@ struct DiscountExerciseParams {
     bool isInstantExit;
 }
 
-struct ConstructorParams {
-    uint256 startTime_;
-    uint256 endTime_;
-    uint256 maxDecay_;
-
+struct ConfigParams {
+    uint256 startTime;
+    uint256 endTime;
+    uint256 startingMultiplier;
+    uint256 multiplierDecay;
 }
 
 /// @title Options Token Exercise Contract
@@ -44,6 +44,8 @@ contract DiscountExercise is BaseExercise, Pausable {
     error Exercise__FeeGreaterThanMax();
     error Exercise__AmountOutIsZero();
     error Exercise__ZapMultiplierIncompatible();
+    error Exercise__NotStarted();
+    error Exercise__InvalidTimes();
 
     /// Events
     event Exercised(address indexed sender, address indexed recipient, uint256 amount, uint256 paymentAmount);
@@ -53,6 +55,7 @@ contract DiscountExercise is BaseExercise, Pausable {
     event Claimed(uint256 indexed amount);
     event SetInstantFee(uint256 indexed instantFee);
     event SetMinAmountToTrigger(uint256 minAmountToTrigger);
+    event SetConfigParams(uint256 startTime, uint256 endTime, uint256 startingMultiplier, uint256 multiplierDecay);
 
     /// Constants
     /// Immutable parameters
@@ -69,9 +72,11 @@ contract DiscountExercise is BaseExercise, Pausable {
     /// the underlying token while exercising options (the strike price)
     IOracle public oracle;
 
-    /// @notice The multiplier applied to the TWAP value. Encodes the discount of
-    /// the options token. Uses 4 decimals.
-    uint256 public multiplier;
+    /// @notice The multiplier applied to oracle price at startTime
+    uint256 public startingMultiplier;
+
+    /// @notice The total amount the multiplier will decay from the startingMultiplier by endTime
+    uint256 public multiplierDecay;
 
     /// @notice The fee amount gathered in the contract to be swapped and distributed
     uint256 private feeAmount;
@@ -82,16 +87,13 @@ contract DiscountExercise is BaseExercise, Pausable {
     /// @notice The time at which the price stops decaying
     uint256 public endTime;
 
-    /// @notice The maximum decay of the price
-    uint256 public maxDecay;
-
     constructor(
         OptionsToken oToken_,
         address owner_,
         IERC20 paymentToken_,
         IERC20 underlyingToken_,
         IOracle oracle_,
-        uint256 multiplier_,
+        ConfigParams memory configParams_,
         address[] memory feeRecipients_,
         uint256[] memory feeBPS_
     ) BaseExercise(oToken_, feeRecipients_, feeBPS_) Owned(owner_) {
@@ -99,9 +101,7 @@ contract DiscountExercise is BaseExercise, Pausable {
         underlyingToken = underlyingToken_;
 
         _setOracle(oracle_);
-        _setMultiplier(multiplier_);
-
-        emit SetOracle(oracle_);
+        _setConfigParams(configParams_);
     }
 
     /// External functions
@@ -132,28 +132,8 @@ contract DiscountExercise is BaseExercise, Pausable {
         _setOracle(oracle_);
     }
 
-    function _setOracle(IOracle oracle_) internal {
-        (address paymentToken_, address underlyingToken_) = oracle_.getTokens();
-        if (paymentToken_ != address(paymentToken) || underlyingToken_ != address(underlyingToken)) {
-            revert Exercise__InvalidOracle();
-        }
-        oracle = oracle_;
-        emit SetOracle(oracle_);
-    }
-
-    /// @notice Sets the discount multiplier.
-    /// @param multiplier_ The new multiplier
-    function setMultiplier(uint256 multiplier_) external onlyOwner {
-        _setMultiplier(multiplier_);
-    }
-
-    function _setMultiplier(uint256 multiplier_) internal {
-        if (
-            multiplier_ > FEE_DENOMINATOR * 2 // over 200%
-                || multiplier_ < FEE_DENOMINATOR / 10 // under 10%
-        ) revert Exercise__MultiplierOutOfRange();
-        multiplier = multiplier_;
-        emit SetMultiplier(multiplier_);
+    function setConfigParams(ConfigParams memory configParams_) external onlyOwner {
+        _setConfigParams(configParams_);
     }
 
     function pause() external onlyOwner {
@@ -186,13 +166,57 @@ contract DiscountExercise is BaseExercise, Pausable {
         underlyingToken.safeTransfer(to, amount);
     }
 
+    function _setConfigParams(ConfigParams memory configParams_) internal {
+        // check that the end time is after the start time
+        // if both are in the past that means we default to the max decay
+        // if both are in the future we are disabling until the start time, then running a full window
+        // if start is in the past and end is in the future, we are running a partial window from now until end
+        if (configParams_.endTime > configParams_.startTime) {
+            revert Exercise__InvalidTimes();
+        }
+        // check that startingMultiplier is less than 2 and greater than 0.1 and that startingMultiplier is greater than the decay
+        if (
+            configParams_.startingMultiplier > 2 * FixedPointMathLib.WAD || configParams_.startingMultiplier < FixedPointMathLib.WAD / 10
+                || configParams_.startingMultiplier < configParams_.multiplierDecay
+        ) {
+            revert Exercise__MultiplierOutOfRange();
+        }
+        startTime = configParams_.startTime;
+        endTime = configParams_.endTime;
+        startingMultiplier = configParams_.startingMultiplier;
+        multiplierDecay = configParams_.multiplierDecay;
+        emit SetConfigParams(configParams_.startTime, configParams_.endTime, configParams_.startingMultiplier, configParams_.multiplierDecay);
+    }
+
+    function _setOracle(IOracle oracle_) internal {
+        (address paymentToken_, address underlyingToken_) = oracle_.getTokens();
+        if (paymentToken_ != address(paymentToken) || underlyingToken_ != address(underlyingToken)) {
+            revert Exercise__InvalidOracle();
+        }
+        oracle = oracle_;
+        emit SetOracle(oracle_);
+    }
+
+
     /// View functions
     //IS IT OK TO MAKE THIS PUBLIC?? I THINK SO
     /// @notice Returns the amount of payment tokens required to exercise the given amount of options tokens.
     /// @param amount The amount of options tokens to exercise
     function getPaymentAmount(uint256 amount) public view returns (uint256 paymentAmount) {
-        uint256 decayFactor = (block.timestamp - startTime) * WAD / (endTime - startTime); //out of DENOM, will be near 1e18 (1) at the end of the time window, will be near 0 at start
-        uint256 decayedPrice = (decayFactor > maxDecay) ? (price - price.mulWadUp(maxDecay)) : (price - price.mulWadUp(decayFactor));
+        uint256 multiplier;
+        // if the exercise window has not started, revert
+        // if the exercise window has ended, use the max decay
+        // otherwise, calculate the decay factor and apply it to the multiplier
+        if (block.timestamp < startTime) {
+            revert Exercise__NotStarted();
+        } else if (block.timestamp > endTime) {
+            multiplier = startingMultiplier - multiplierDecay;
+        } else {
+            // decayFactor goes from 0 to 1 (WAD) from startTime to endTime
+            uint256 decayFactor = (block.timestamp - startTime) * WAD / (endTime - startTime);
+            // multiplier goes from startingMultiplier to startingMultiplier - multiplierDecay from startTime to endTime
+            multiplier = startingMultiplier - multiplierDecay.mulWadUp(decayFactor);
+        }
         paymentAmount = amount.mulWadUp(oracle.getPrice().mulDivUp(multiplier, FEE_DENOMINATOR));
     }
 }
