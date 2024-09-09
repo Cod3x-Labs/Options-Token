@@ -217,6 +217,6 @@ contract DiscountExercise is BaseExercise, Pausable {
             // multiplier goes from startingMultiplier to startingMultiplier - multiplierDecay from startTime to endTime
             multiplier = startingMultiplier - multiplierDecay.mulWadUp(decayFactor);
         }
-        paymentAmount = amount.mulWadUp(oracle.getPrice().mulDivUp(multiplier, FEE_DENOMINATOR));
+        paymentAmount = amount.mulWadUp(oracle.getPrice().mulWadUp(multiplier)); // check decimals
     }
 }
