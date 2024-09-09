@@ -9,6 +9,8 @@ import {ERC1967Proxy} from "oz/proxy/ERC1967/ERC1967Proxy.sol";
 
 import {OptionsToken} from "../src/OptionsToken.sol";
 import {DiscountExerciseParams, DiscountExercise, BaseExercise, SwapProps, ExchangeType} from "../src/exercise/DiscountExercise.sol";
+import {DiscountExerciseDecaying} from "../src/exercise/DiscountExerciseDecaying.sol";
+import {FixedExerciseDecaying} from "../src/exercise/FixedExerciseDecaying.sol";
 import {TestERC20} from "./mocks/TestERC20.sol";
 import {IOracle} from "../src/interfaces/IOracle.sol";
 import {BalancerOracle} from "../src/oracles/BalancerOracle.sol";
@@ -37,6 +39,8 @@ contract OptionsTokenTest is Test {
 
     OptionsToken optionsToken;
     DiscountExercise exerciser;
+    DiscountExerciseDecaying exerciserDec;
+    FixedExerciseDecaying exerciserFixDec;
     IOracle oracle;
     MockBalancerTwapOracle balancerTwapOracle;
     TestERC20 paymentToken;
@@ -96,6 +100,33 @@ contract OptionsTokenTest is Test {
             feeRecipients_,
             feeBPS_,
             swapProps
+        );
+        
+        DiscountExerciseDecaying.ConfigParams memory configParams =
+            DiscountExerciseDecaying.ConfigParams({startTime: 0, endTime: 1e27, startingMultiplier: 1e18, multiplierDecay: 1e17});
+        
+        exerciserDec = new DiscountExerciseDecaying(
+            optionsToken,
+            owner,
+            IERC20(address(paymentToken)),
+            IERC20(underlyingToken),
+            oracle,
+            configParams,
+            feeRecipients_,
+            feeBPS_
+        );
+
+        FixedExerciseDecaying.ConfigParams memory fixConfigParams =
+            FixedExerciseDecaying.ConfigParams({startTime: 0, endTime: 1e27, startingPrice: 1e18, priceDecay: 1e17});
+        
+        exerciserFixDec = new FixedExerciseDecaying(
+            optionsToken,
+            owner,
+            IERC20(address(paymentToken)),
+            IERC20(underlyingToken),
+            fixConfigParams,
+            feeRecipients_,
+            feeBPS_
         );
         deal(underlyingToken, address(exerciser), 1e27);
 

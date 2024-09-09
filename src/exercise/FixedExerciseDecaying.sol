@@ -9,13 +9,6 @@ import {FixedPointMathLib} from "solmate/utils/FixedPointMathLib.sol";
 import {BaseExercise} from "../exercise/BaseExercise.sol";
 import {OptionsToken} from "../OptionsToken.sol";
 
-struct ConfigParams {
-    uint256 startTime;
-    uint256 endTime;
-    uint256 startingPrice;
-    uint256 priceDecay;
-}
-
 /// @title Options Token Fixed Price Decaying Exercise Contract
 /// @author @adamo, @funkornaut, Eidolon
 /// @notice Contract that allows the holder of options tokens to exercise them,
@@ -39,6 +32,13 @@ contract FixedExerciseDecaying is BaseExercise {
     event SetTreasury(address indexed newTreasury);
     event SetPrice(uint256 indexed price);
     event SetConfigParams(uint256 startTime, uint256 endTime, uint256 startingPrice, uint256 priceDecay);
+
+    struct ConfigParams {
+        uint256 startTime;
+        uint256 endTime;
+        uint256 startingPrice;
+        uint256 priceDecay;
+    }
 
     /// Constants
 

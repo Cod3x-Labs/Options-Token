@@ -20,7 +20,7 @@ struct DiscountExerciseParams {
 }
 
 /// @title Options Token Exercise Contract
-/// @author @lookee, @eidolon
+/// @author @lookee, Eidolon
 /// @notice Contract that allows the holder of options tokens to exercise them,
 /// in this case, by purchasing the underlying token at a discount to the market price.
 /// @dev Assumes the underlying token and the payment token both use 18 decimals.

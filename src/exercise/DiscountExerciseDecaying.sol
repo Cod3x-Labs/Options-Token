@@ -19,19 +19,13 @@ struct DiscountExerciseParams {
     bool isInstantExit;
 }
 
-struct ConfigParams {
-    uint256 startTime;
-    uint256 endTime;
-    uint256 startingMultiplier;
-    uint256 multiplierDecay;
-}
 
 /// @title Options Token Exercise Contract
-/// @author @lookee, @eidolon
+/// @author @lookee, Eidolon
 /// @notice Contract that allows the holder of options tokens to exercise them,
 /// in this case, by purchasing the underlying token at a discount to the market price.
 /// @dev Assumes the underlying token and the payment token both use 18 decimals.
-contract DiscountExercise is BaseExercise, Pausable {
+contract DiscountExerciseDecaying is BaseExercise, Pausable {
     /// Library usage
     using SafeERC20 for IERC20;
     using FixedPointMathLib for uint256;
@@ -56,6 +50,13 @@ contract DiscountExercise is BaseExercise, Pausable {
     event SetInstantFee(uint256 indexed instantFee);
     event SetMinAmountToTrigger(uint256 minAmountToTrigger);
     event SetConfigParams(uint256 startTime, uint256 endTime, uint256 startingMultiplier, uint256 multiplierDecay);
+
+    struct ConfigParams {
+        uint256 startTime;
+        uint256 endTime;
+        uint256 startingMultiplier;
+        uint256 multiplierDecay;
+    }
 
     /// Constants
     /// Immutable parameters
