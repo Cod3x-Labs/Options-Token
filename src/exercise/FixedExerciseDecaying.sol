@@ -69,7 +69,7 @@ contract FixedExerciseDecaying is BaseExercise {
         address owner_,
         IERC20 paymentToken_,
         IERC20 underlyingToken_,
-        ConfigParams configParams_,
+        ConfigParams memory configParams_,
         address[] memory feeRecipients_,
         uint256[] memory feeBPS_
     ) BaseExercise(oToken_, feeRecipients_, feeBPS_) Owned(owner_) {
