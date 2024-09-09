@@ -44,7 +44,7 @@ contract DiscountExercise is BaseExercise, Pausable {
     error Exercise__FeeGreaterThanMax();
     error Exercise__AmountOutIsZero();
     error Exercise__ZapMultiplierIncompatible();
-    error Exercise__NotStarted();
+    error Exercise__ExerciseWindowNotOpen();
     error Exercise__InvalidTimes();
 
     /// Events
@@ -150,6 +150,8 @@ contract DiscountExercise is BaseExercise, Pausable {
         virtual
         returns (uint256 paymentAmount, address, uint256, uint256)
     {
+        // check if exercise window is open
+        if (block.timestamp < startTime) revert Exercise__ExerciseWindowNotOpen();
         if (block.timestamp > params.deadline) revert Exercise__PastDeadline();
         // apply multiplier to price
         paymentAmount = getPaymentAmount(amount);
@@ -208,7 +210,7 @@ contract DiscountExercise is BaseExercise, Pausable {
         // if the exercise window has ended, use the max decay
         // otherwise, calculate the decay factor and apply it to the multiplier
         if (block.timestamp < startTime) {
-            revert Exercise__NotStarted();
+            multiplier = startingMultiplier; // returns price based on startingMultiplier but cannot exercise still
         } else if (block.timestamp > endTime) {
             multiplier = startingMultiplier - multiplierDecay;
         } else {
