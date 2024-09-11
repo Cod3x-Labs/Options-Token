@@ -1,7 +1,9 @@
 # Description 
 ## OptionsToken
 
-An options token representing the right to exercise any one of the whitelisted exercise contracts, allowing the user to receive different forms of discounted assets in return for the appropriate payment. The option does not expire. The options token receives user input and a specified exercise contract address, passing through to the exercise contract to execute the option. We originally fork https://github.com/timeless-fi/options-token, which is a simple implementation of an option for discounted tokens at an adjusted oracle rate. Here, we divorce the exercise functionality from the token contract, and allow an admin to whitelist and fund exercise contracts as the desired. We also implement more potential oracle types, and make several other minor changes.
+An options token representing the right to exercise any one of the whitelisted exercise contracts, allowing the user to receive different forms of discounted assets in return for the appropriate payment. The option does not expire. The options token receives user input and a specified exercise contract address, passing through to the exercise contract to execute the option.
+
+We originally fork https://github.com/timeless-fi/options-token, which is a simple implementation of an option for discounted tokens at an adjusted oracle rate. Here, we divorce the exercise functionality from the token contract, and allow an admin to whitelist and fund multiple novel exercise contracts as the desired. We also implement more potential oracle types, and make several other minor changes.
 
 A module for strategies that compound options tokens is also provided.
 
