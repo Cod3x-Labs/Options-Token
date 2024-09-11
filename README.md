@@ -7,55 +7,29 @@ We originally fork https://github.com/timeless-fi/options-token, which is a simp
 
 A module for strategies that compound options tokens is also provided.
 
-# Installation
-
-To install with [DappTools](https://github.com/dapphub/dapptools):
-
-```
-dapp install timeless-fi/options-token
-```
-
-To install with [Foundry](https://github.com/gakonst/foundry):
-
-```
-forge install timeless-fi/options-token
-```
-
-## Local development
+# Development
 
 This project uses [Foundry](https://github.com/gakonst/foundry) as the development framework.
 
-### Dependencies
+## Dependencies
 
 ```
 forge install
 ```
 
-### Compilation
+## Compilation
 
 ```
 forge build
 ```
 
-# Testing
-
-## Dynamic
+## Testing
 
 ```
 forge test
 ```
 
 `--report lcov` - coverage which can be turned on in code using "Coverage Gutters"
-
-## Static 
-
-`slither . --include-path src/<targetFile>`
-
-`--checklist` - report in md
-
-`--print inheritance-graph` - generate inheritance graph in xdot
-
-`xdot inheritance-graph.dot` - open inheritance graph
 
 # Deployment
 
