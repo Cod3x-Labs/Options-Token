@@ -136,6 +136,7 @@ There are 2 deployment scripts. One is for swapper and paths updates and second 
   "ORACLE": "undefined"
 }
 ```
+# Basic Functionality
 ## PaymentToken
 Token used to pay for exercising options token. Ironclad -> MODE
 
