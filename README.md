@@ -29,8 +29,6 @@ forge build
 forge test
 ```
 
-`--report lcov` - coverage which can be turned on in code using "Coverage Gutters"
-
 # Deployment
 
 Inside `./scripts` there is "config.json" where can be defined deployment configurations.
