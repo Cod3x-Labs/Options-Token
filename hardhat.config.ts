@@ -56,7 +56,7 @@ const config: HardhatUserConfig = {
   etherscan: {
     apiKey: { 
       bsc: process.env.ETHERSCAN_KEY || "",
-      scroll: "IUAUSFVIJAPSA53NXFJHZY8413IN6NNFAN",
+      scroll: process.env.SCROLLSCAN_API_KEY || "",
     },
     customChains: [
       {
