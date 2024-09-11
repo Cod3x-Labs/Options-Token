@@ -143,10 +143,10 @@ Token used to pay for exercising options token. Ironclad -> MODE
 ## UnderlyingToken
 Token which can be obtained from exercising. Ironclad -> ICL
 
-## ZAP
+## Zap
 The underlying tokens available in the DiscountExercise contract are sent to the user. The amount of underlying tokens is discounted by the multiplier and reduced by the penalty fee.
 
-## REDEEM
+## Redeem
 oTokens are burnt, PaymentToken is sent to the treasury, and underlyingTokens, discounted by the multiplier, are sent to the user exercising
  - Can be priced using balancer, thena, univ3 twap oracles
  - Reverts above maxPaymentAmount or past deadline
