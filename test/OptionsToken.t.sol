@@ -129,15 +129,21 @@ contract OptionsTokenTest is Test {
             feeBPS_
         );
         deal(underlyingToken, address(exerciser), 1e27);
+        deal(underlyingToken, address(exerciserDec), 1e27);
+        deal(underlyingToken, address(exerciserFixDec), 1e27);
 
         // add exerciser to the list of options
         vm.startPrank(owner);
         optionsToken.setExerciseContract(address(exerciser), true);
+        optionsToken.setExerciseContract(address(exerciserDec), true);
+        optionsToken.setExerciseContract(address(exerciserFixDec), true);
         vm.stopPrank();
 
         // set up contracts
         balancerTwapOracle.setTwapValue(ORACLE_INIT_TWAP_VALUE);
         paymentToken.approve(address(exerciser), type(uint256).max);
+        paymentToken.approve(address(exerciserDec), type(uint256).max);
+        paymentToken.approve(address(exerciserFixDec), type(uint256).max);
     }
 
     function test_onlyTokenAdminCanMint(uint256 amount, address hacker) public {
@@ -598,5 +604,35 @@ contract OptionsTokenTest is Test {
         assertGt(redeemProfit, zapProfit, "Profits from zap is greater than profits from redeem");
 
         assertEq(redeemProfit - redeemProfit.mulDivUp(INSTANT_EXIT_FEE, BPS_DENOM), zapProfit, "Zap profit is different than redeem profit minus fee");
+    }
+
+    function test_exerciseDecaying(uint256 amount) public {
+        amount = bound(amount, 1e10, 1e26);
+        address recipient = makeAddr("recipient");
+
+        // mint options tokens
+        vm.prank(tokenAdmin);
+        optionsToken.mint(address(this), amount);
+
+        // mint payment tokens
+        uint256 expectedPaymentAmount = amount.mulWadUp(ORACLE_INIT_TWAP_VALUE.mulDivUp(PRICE_MULTIPLIER, ORACLE_MIN_PRICE_DENOM));
+        deal(address(paymentToken), address(this), expectedPaymentAmount);
+
+        // exercise options tokens
+        DiscountDecayingParams memory params =
+            DiscountDecayingParams({maxPaymentAmount: expectedPaymentAmount, deadline: type(uint256).max});
+        (uint256 paymentAmount,,,) = optionsToken.exercise(amount, recipient, address(exerciserDec), abi.encode(params));
+
+        // verify options tokens were transferred
+        assertEqDecimal(optionsToken.balanceOf(address(this)), 0, 18, "user still has options tokens");
+        assertEqDecimal(optionsToken.totalSupply(), 0, 18, "option tokens not burned");
+
+        // verify payment tokens were transferred
+        assertEqDecimal(paymentToken.balanceOf(address(this)), 0, 18, "user still has payment tokens");
+        uint256 paymentFee1 = expectedPaymentAmount.mulDivDown(feeBPS_[0], 10000);
+        uint256 paymentFee2 = expectedPaymentAmount - paymentFee1;
+        assertEqDecimal(paymentToken.balanceOf(feeRecipients_[0]), paymentFee1, 18, "fee recipient 1 didn't receive payment tokens");
+        assertEqDecimal(paymentToken.balanceOf(feeRecipients_[1]), paymentFee2, 18, "fee recipient 2 didn't receive payment tokens");
+        assertEqDecimal(expectedPaymentAmount, paymentAmount, 18, "exercise returned wrong value");
     }
 }

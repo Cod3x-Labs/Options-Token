@@ -13,10 +13,9 @@ import {OptionsToken} from "../OptionsToken.sol";
 
 import {ExchangeType, SwapProps, SwapHelper} from "../helpers/SwapHelper.sol";
 
-struct DiscountExerciseParams {
+struct DiscountDecayingParams {
     uint256 maxPaymentAmount;
     uint256 deadline;
-    bool isInstantExit;
 }
 
 
@@ -121,7 +120,7 @@ contract DiscountExerciseDecaying is BaseExercise, Pausable {
         whenNotPaused
         returns (uint256 paymentAmount, address, uint256, uint256)
     {
-        DiscountExerciseParams memory _params = abi.decode(params, (DiscountExerciseParams));
+        DiscountDecayingParams memory _params = abi.decode(params, (DiscountDecayingParams));
         return _exercise(from, amount, recipient, _params);
     }
 
@@ -146,7 +145,7 @@ contract DiscountExerciseDecaying is BaseExercise, Pausable {
     }
 
     /// Internal functions
-    function _exercise(address from, uint256 amount, address recipient, DiscountExerciseParams memory params)
+    function _exercise(address from, uint256 amount, address recipient, DiscountDecayingParams memory params)
         internal
         virtual
         returns (uint256 paymentAmount, address, uint256, uint256)
