@@ -173,7 +173,7 @@ contract DiscountExerciseDecaying is BaseExercise, Pausable {
         // if both are in the past that means we default to the max decay
         // if both are in the future we are disabling until the start time, then running a full window
         // if start is in the past and end is in the future, we are running a partial window from now until end
-        if (configParams_.endTime > configParams_.startTime) {
+        if (configParams_.endTime < configParams_.startTime) {
             revert Exercise__InvalidTimes();
         }
         // check that startingMultiplier is less than 2 and greater than 0.1 and that startingMultiplier is greater than the decay
