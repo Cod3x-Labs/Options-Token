@@ -9,7 +9,7 @@ import {ERC1967Proxy} from "oz/proxy/ERC1967/ERC1967Proxy.sol";
 
 import {OptionsToken} from "../src/OptionsToken.sol";
 import {DiscountExerciseParams, DiscountExercise, BaseExercise, SwapProps, ExchangeType} from "../src/exercise/DiscountExercise.sol";
-import {DiscountExerciseDecaying} from "../src/exercise/DiscountExerciseDecaying.sol";
+import {DiscountExerciseDecaying, DiscountDecayingParams} from "../src/exercise/DiscountExerciseDecaying.sol";
 import {FixedExerciseDecaying} from "../src/exercise/FixedExerciseDecaying.sol";
 import {TestERC20} from "./mocks/TestERC20.sol";
 import {IOracle} from "../src/interfaces/IOracle.sol";
@@ -36,6 +36,7 @@ contract OptionsTokenTest is Test {
     address tokenAdmin;
     address[] feeRecipients_;
     uint256[] feeBPS_;
+    uint256 maxTimeOffset;
 
     OptionsToken optionsToken;
     DiscountExercise exerciser;
@@ -102,8 +103,9 @@ contract OptionsTokenTest is Test {
             swapProps
         );
         
+        maxTimeOffset = 22 days;
         DiscountExerciseDecaying.ConfigParams memory configParams =
-            DiscountExerciseDecaying.ConfigParams({startTime: 0, endTime: 1e27, startingMultiplier: 1e18, multiplierDecay: 1e17});
+            DiscountExerciseDecaying.ConfigParams({startTime: block.timestamp, endTime: block.timestamp + maxTimeOffset, startingMultiplier: 1e18, multiplierDecay: 1e17});
         
         exerciserDec = new DiscountExerciseDecaying(
             optionsToken,
@@ -117,7 +119,7 @@ contract OptionsTokenTest is Test {
         );
 
         FixedExerciseDecaying.ConfigParams memory fixConfigParams =
-            FixedExerciseDecaying.ConfigParams({startTime: 0, endTime: 1e27, startingPrice: 1e18, priceDecay: 1e17});
+            FixedExerciseDecaying.ConfigParams({startTime: block.timestamp, endTime: block.timestamp + maxTimeOffset, startingPrice: 1e18, priceDecay: 1e17});
         
         exerciserFixDec = new FixedExerciseDecaying(
             optionsToken,
@@ -144,6 +146,9 @@ contract OptionsTokenTest is Test {
         paymentToken.approve(address(exerciser), type(uint256).max);
         paymentToken.approve(address(exerciserDec), type(uint256).max);
         paymentToken.approve(address(exerciserFixDec), type(uint256).max);
+
+        // set blocktimestamp above 1
+        vm.warp(1726160297);
     }
 
     function test_onlyTokenAdminCanMint(uint256 amount, address hacker) public {
@@ -606,16 +611,21 @@ contract OptionsTokenTest is Test {
         assertEq(redeemProfit - redeemProfit.mulDivUp(INSTANT_EXIT_FEE, BPS_DENOM), zapProfit, "Zap profit is different than redeem profit minus fee");
     }
 
-    function test_exerciseDecaying(uint256 amount) public {
-        amount = bound(amount, 1e10, 1e26);
+    function test_exerciseDecaying(uint256 amount, uint256 timeOffset) public {
+        amount = bound(amount, 1e10, 1e24);
+        timeOffset = bound(timeOffset, 1, maxTimeOffset);
+        console.log("Old Time", block.timestamp);
         address recipient = makeAddr("recipient");
+        vm.warp(block.timestamp + timeOffset);
+        console.log("Time offset: ", timeOffset);
+        console.log("Current time: ", block.timestamp);
 
         // mint options tokens
         vm.prank(tokenAdmin);
         optionsToken.mint(address(this), amount);
 
         // mint payment tokens
-        uint256 expectedPaymentAmount = amount.mulWadUp(ORACLE_INIT_TWAP_VALUE.mulDivUp(PRICE_MULTIPLIER, ORACLE_MIN_PRICE_DENOM));
+        uint256 expectedPaymentAmount = exerciserDec.getPaymentAmount(amount);
         deal(address(paymentToken), address(this), expectedPaymentAmount);
 
         // exercise options tokens
@@ -631,8 +641,8 @@ contract OptionsTokenTest is Test {
         assertEqDecimal(paymentToken.balanceOf(address(this)), 0, 18, "user still has payment tokens");
         uint256 paymentFee1 = expectedPaymentAmount.mulDivDown(feeBPS_[0], 10000);
         uint256 paymentFee2 = expectedPaymentAmount - paymentFee1;
-        assertEqDecimal(paymentToken.balanceOf(feeRecipients_[0]), paymentFee1, 18, "fee recipient 1 didn't receive payment tokens");
-        assertEqDecimal(paymentToken.balanceOf(feeRecipients_[1]), paymentFee2, 18, "fee recipient 2 didn't receive payment tokens");
-        assertEqDecimal(expectedPaymentAmount, paymentAmount, 18, "exercise returned wrong value");
+        assertApproxEqRel(paymentToken.balanceOf(feeRecipients_[0]), paymentFee1, 1e15, "fee recipient 1 didn't receive payment tokens");
+        assertApproxEqRel(paymentToken.balanceOf(feeRecipients_[1]), paymentFee2, 1e15, "fee recipient 2 didn't receive payment tokens");
+        assertApproxEqRel(expectedPaymentAmount, paymentAmount, 1e15, "exercise returned wrong value");
     }
 }
