@@ -22,6 +22,8 @@ contract OptionsTokenTest is Test {
     using FixedPointMathLib for uint256;
 
     uint16 constant PRICE_MULTIPLIER = 5000; // 0.5
+    uint256 constant STARTING_MULTIPLIER = 8e17;
+    uint256 constant MULTIPLIER_DECAY = 4e17;
     uint56 constant ORACLE_SECS = 30 minutes;
     uint56 constant ORACLE_AGO = 2 minutes;
     uint128 constant ORACLE_MIN_PRICE = 1e17;
@@ -60,6 +62,9 @@ contract OptionsTokenTest is Test {
         feeBPS_ = new uint256[](2);
         feeBPS_[0] = 1000; // 10%
         feeBPS_[1] = 9000; // 90%
+
+        // set blocktimestamp above 1
+        vm.warp(1726160297);
 
         // deploy contracts
         paymentToken = new TestERC20();
@@ -105,7 +110,7 @@ contract OptionsTokenTest is Test {
         
         maxTimeOffset = 22 days;
         DiscountExerciseDecaying.ConfigParams memory configParams =
-            DiscountExerciseDecaying.ConfigParams({startTime: block.timestamp, endTime: block.timestamp + maxTimeOffset, startingMultiplier: 1e18, multiplierDecay: 1e17});
+            DiscountExerciseDecaying.ConfigParams({startTime: block.timestamp, endTime: block.timestamp + maxTimeOffset, startingMultiplier: STARTING_MULTIPLIER, multiplierDecay: MULTIPLIER_DECAY});
         
         exerciserDec = new DiscountExerciseDecaying(
             optionsToken,
@@ -146,9 +151,6 @@ contract OptionsTokenTest is Test {
         paymentToken.approve(address(exerciser), type(uint256).max);
         paymentToken.approve(address(exerciserDec), type(uint256).max);
         paymentToken.approve(address(exerciserFixDec), type(uint256).max);
-
-        // set blocktimestamp above 1
-        vm.warp(1726160297);
     }
 
     function test_onlyTokenAdminCanMint(uint256 amount, address hacker) public {
@@ -611,10 +613,12 @@ contract OptionsTokenTest is Test {
         assertEq(redeemProfit - redeemProfit.mulDivUp(INSTANT_EXIT_FEE, BPS_DENOM), zapProfit, "Zap profit is different than redeem profit minus fee");
     }
 
-    function test_exerciseDecaying(uint256 amount, uint256 timeOffset) public {
-        amount = bound(amount, 1e10, 1e24);
+    function test_exerciseDecayingPositiveScenario(uint256 amount, uint256 timeOffset) public {
+        amount = bound(amount, 1e6, 1e26);
         timeOffset = bound(timeOffset, 1, maxTimeOffset);
-        console.log("Old Time", block.timestamp);
+        uint256 startTime = block.timestamp;
+        uint256 endTime = startTime + maxTimeOffset;
+        console.log("Old Time", startTime);
         address recipient = makeAddr("recipient");
         vm.warp(block.timestamp + timeOffset);
         console.log("Time offset: ", timeOffset);
@@ -625,13 +629,21 @@ contract OptionsTokenTest is Test {
         optionsToken.mint(address(this), amount);
 
         // mint payment tokens
-        uint256 expectedPaymentAmount = exerciserDec.getPaymentAmount(amount);
+        //THIS AMOUNT SHOULD BE CALCULATED EXTERNALLY
+        //uint256 expectedPaymentAmount = exerciserDec.getPaymentAmount(amount);
+        uint256 decayFactor = (block.timestamp - startTime) * 1e18 / (endTime - startTime);
+        console.log("Decay Factor: ", decayFactor);
+        uint256 multiplier = STARTING_MULTIPLIER - MULTIPLIER_DECAY.mulWadUp(decayFactor);
+        console.log("Adjusted Multiplier", multiplier);
+        uint256 expectedPaymentAmount = amount.mulWadUp(ORACLE_INIT_TWAP_VALUE.mulWadUp(multiplier));
+        console.log("Expected Payment Amount: ", expectedPaymentAmount);
         deal(address(paymentToken), address(this), expectedPaymentAmount);
 
         // exercise options tokens
         DiscountDecayingParams memory params =
             DiscountDecayingParams({maxPaymentAmount: expectedPaymentAmount, deadline: type(uint256).max});
         (uint256 paymentAmount,,,) = optionsToken.exercise(amount, recipient, address(exerciserDec), abi.encode(params));
+        console.log("Actual Payment Amount: ", paymentAmount);
 
         // verify options tokens were transferred
         assertEqDecimal(optionsToken.balanceOf(address(this)), 0, 18, "user still has options tokens");
